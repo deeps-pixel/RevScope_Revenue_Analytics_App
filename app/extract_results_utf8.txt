@@ -1,0 +1,1853 @@
+
+==================== IS_4007_Module_1.ipynb ====================
+--- Markdown 1 ---
+### Load Data
+--- Code Output 3 ---
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 100 entries, 0 to 99
+Data columns (total 7 columns):
+ #   Column             Non-Null Count  Dtype  
+---  ------             --------------  -----  
+ 0   product_id         100 non-null    object 
+ 1   product_name       100 non-null    object 
+ 2   category           100 non-null    object 
+ 3   standard_price     100 non-null    float64
+ 4   cost_price         100 non-null    float64
+ 5   margin_percentage  100 non-null    float64
+ 6   active_status      100 non-null    object 
+dtypes: float64(3), object(4)
+memory usage: 5.6+ KB
+
+--- Code Output 4 ---
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 2000 entries, 0 to 1999
+Data columns (total 8 columns):
+ #   Column               Non-Null Count  Dtype 
+---  ------               --------------  ----- 
+ 0   customer_id          2000 non-null   object
+ 1   customer_type        2000 non-null   object
+ 2   segment              2000 non-null   object
+ 3   acquisition_channel  2000 non-null   object
+ 4   customer_since       2000 non-null   object
+ 5   location_category    2000 non-null   object
+ 6   age_band             1388 non-null   object
+ 7   business_size        612 non-null    object
+dtypes: object(8)
+memory usage: 125.1+ KB
+
+--- Code Output 5 ---
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 20 entries, 0 to 19
+Data columns (total 6 columns):
+ #   Column         Non-Null Count  Dtype  
+---  ------         --------------  -----  
+ 0   campaign_id    20 non-null     object 
+ 1   campaign_name  20 non-null     object 
+ 2   start_date     20 non-null     object 
+ 3   end_date       20 non-null     object 
+ 4   offer_type     20 non-null     object 
+ 5   campaign_cost  20 non-null     float64
+dtypes: float64(1), object(5)
+memory usage: 1.1+ KB
+
+--- Code Output 6 ---
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 50000 entries, 0 to 49999
+Data columns (total 15 columns):
+ #   Column               Non-Null Count  Dtype  
+---  ------               --------------  -----  
+ 0   transaction_id       50000 non-null  object 
+ 1   transaction_date     50000 non-null  object 
+ 2   customer_id          50000 non-null  object 
+ 3   product_id           50000 non-null  object 
+ 4   branch_id            50000 non-null  object 
+ 5   channel              50000 non-null  object 
+ 6   quantity             50000 non-null  int64  
+ 7   unit_price           50000 non-null  float64
+ 8   discount_percentage  50000 non-null  float64
+ 9   gross_revenue        50000 non-null  float64
+ 10  net_revenue          50000 non-null  float64
+ 11  cost                 50000 non-null  float64
+ 12  gross_margin         50000 non-null  float64
+ 13  payment_status       50000 non-null  object 
+ 14  campaign_id          9803 non-null   object 
+dtypes: float64(6), int64(1), object(8)
+memory usage: 5.7+ MB
+
+--- Markdown 8 ---
+### Merge age_band / business_size into one field
+--- Markdown 10 ---
+### Handling Missing Values
+--- Code Output 11 ---
+customer_id            0
+customer_type          0
+segment                0
+acquisition_channel    0
+customer_since         0
+location_category      0
+customer_attribute     0
+attribute_type         0
+dtype: int64
+--- Code Output 12 ---
+product_id           0
+product_name         0
+category             0
+standard_price       0
+cost_price           0
+margin_percentage    0
+active_status        0
+dtype: int64
+--- Code Output 13 ---
+campaign_id      0
+campaign_name    0
+start_date       0
+end_date         0
+offer_type       0
+campaign_cost    0
+dtype: int64
+--- Code Output 14 ---
+transaction_id             0
+transaction_date           0
+customer_id                0
+product_id                 0
+branch_id                  0
+channel                    0
+quantity                   0
+unit_price                 0
+discount_percentage        0
+gross_revenue              0
+net_revenue                0
+cost                       0
+gross_margin               0
+payment_status             0
+campaign_id            40197
+dtype: int64
+--- Code Output 16 ---
+  transaction_id transaction_date customer_id product_id branch_id  \
+0      TXN034365       2024-01-01      C00155      P0099      BR06   
+1      TXN010962       2024-01-01      C00043      P0006      BR03   
+2      TXN007598       2024-01-01      C01252      P0004      BR05   
+3      TXN038126       2024-01-01      C01733      P0096      BR02   
+4      TXN018144       2024-01-01      C01923      P0049      BR03   
+
+        channel  quantity  unit_price  discount_percentage  gross_revenue  \
+0        Online         6      251.81                  5.0        1510.86   
+1        Branch         1       47.10                 10.0          47.10   
+2        Dealer         1       82.84                 20.0          82.84   
+3        Branch         1       35.47                 10.0          35.47   
+4  Direct Sales         3      141.88                 20.0         425.64   
+
+   net_revenue    cost  gross_margin payment_status  campaign_id  has_campaign  
+0      1435.32  950.22        485.10           Paid  No Campaign         False  
+1        42.39   25.71         16.68           Paid  No Campaign         False  
+2        66.27   55.08         11.19           Paid  No Campaign         False  
+3        31.92   25.23          6.69           Paid  No Campaign         False  
+4       340.51  399.60        -59.09           Paid  No Campaign         False  
+--- Markdown 17 ---
+### JOIN: sales + products + customers + campaigns
+--- Markdown 19 ---
+### Derives Columns
+--- Markdown 21 ---
+### Validation Check
+--- Code Output 22 ---
+============================================================
+VALIDATION REPORT
+============================================================
+Total rows in master_sales: 50,000
+Date range: 2024-01-01 to 2025-12-31
+
+-- Referential integrity --
+Unmatched product_id: 0
+Unmatched customer_id: 0
+
+-- Negative value checks --
+Negative net_revenue: 0
+Negative gross_margin: 2230 (expected: some, due to heavy discounting)
+Negative customer_tenure_days: 0 (should be 0 - a sale can't happen before the customer joined)
+
+-- Missing values per column --
+campaign_start_date    40197
+campaign_end_date      40197
+campaign_cost          40197
+dtype: int64
+
+-- Category summary --
+payment_status:
+ payment_status
+Paid              41930
+Overdue            3630
+Pending            2967
+Partially Paid     1473
+Name: count, dtype: int64
+
+has_campaign:
+ has_campaign
+False    40197
+True      9803
+Name: count, dtype: int64
+
+--- Markdown 23 ---
+### Save
+--- Code Output 24 ---
+
+Saved master_sales.csv -> 50,000 rows, 40 columns
+Columns: ['transaction_id', 'transaction_date', 'customer_id', 'product_id', 'branch_id', 'channel', 'quantity', 'unit_price', 'discount_percentage', 'gross_revenue', 'net_revenue', 'cost', 'gross_margin', 'payment_status', 'campaign_id', 'has_campaign', 'product_name', 'category', 'standard_price', 'cost_price', 'margin_percentage', 'active_status', 'customer_type', 'segment', 'acquisition_channel', 'customer_since', 'location_category', 'customer_attribute', 'attribute_type', 'campaign_name', 'campaign_start_date', 'campaign_end_date', 'offer_type', 'campaign_cost', 'transaction_year', 'transaction_month', 'transaction_year_month', 'discount_band', 'customer_tenure_days', 'margin_percentage_tx']
+Saved customers_cleaned.csv -> 2,000 rows (customer_since corrected)
+
+-- Post-fix check --
+Negative customer_tenure_days now: 0
+
+Absolute path used: C:\Users\SHINI\revenue_analytics_project\data\processed\master_sales.csv
+File exists? True
+
+Contents of OUT_DIR/processed:
+['.~lock.master_sales.csv#', 'master_sales.csv']
+
+--- Code Output 25 ---
+Absolute path used: C:\Users\SHINI\revenue_analytics_project\data\processed\master_sales.csv
+File exists? True
+
+Contents of OUT_DIR/processed:
+['.~lock.master_sales.csv#', 'master_sales.csv']
+
+--- Code Output 26 ---
+C:\Users\SHINI\AppData\Local\Temp\ipykernel_13516\3669382234.py:1: DtypeWarning: Columns (30,31) have mixed types. Specify dtype option on import or set low_memory=False.
+  master = pd.read_csv("C:/Users/SHINI/revenue_analytics_project/data/processed/master_sales.csv")
+
+--- Code Output 27 ---
+['transaction_id', 'transaction_date', 'customer_id', 'product_id', 'branch_id', 'channel', 'quantity', 'unit_price', 'discount_percentage', 'gross_revenue', 'net_revenue', 'cost', 'gross_margin', 'payment_status', 'campaign_id', 'has_campaign', 'product_name', 'category', 'standard_price', 'cost_price', 'margin_percentage', 'active_status', 'customer_type', 'segment', 'acquisition_channel', 'customer_since', 'location_category', 'customer_attribute', 'attribute_type', 'campaign_name', 'campaign_start_date', 'campaign_end_date', 'offer_type', 'campaign_cost', 'transaction_year', 'transaction_month', 'transaction_year_month', 'discount_band', 'customer_tenure_days', 'margin_percentage_tx']
+
+--- Code Output 28 ---
+  transaction_id transaction_date customer_id product_id branch_id  \
+0      TXN034365       2024-01-01      C00155      P0099      BR06   
+1      TXN010962       2024-01-01      C00043      P0006      BR03   
+2      TXN007598       2024-01-01      C01252      P0004      BR05   
+3      TXN038126       2024-01-01      C01733      P0096      BR02   
+4      TXN018144       2024-01-01      C01923      P0049      BR03   
+
+        channel  quantity  unit_price  discount_percentage  gross_revenue  \
+0        Online         6      251.81                  5.0        1510.86   
+1        Branch         1       47.10                 10.0          47.10   
+2        Dealer         1       82.84                 20.0          82.84   
+3        Branch         1       35.47                 10.0          35.47   
+4  Direct Sales         3      141.88                 20.0         425.64   
+
+   ...  campaign_start_date  campaign_end_date  offer_type campaign_cost  \
+0  ...                  NaN                NaN    No offer           NaN   
+1  ...                  NaN                NaN    No offer           NaN   
+2  ...                  NaN                NaN    No offer           NaN   
+3  ...                  NaN                NaN    No offer           NaN   
+4  ...                  NaN                NaN    No offer           NaN   
+
+  transaction_year  transaction_month transaction_year_month discount_band  \
+0             2024                  1                2024-01          1-5%   
+1             2024                  1                2024-01         6-10%   
+2             2024                  1                2024-01        16-20%   
+3             2024                  1                2024-01         6-10%   
+4             2024                  1                2024-01        16-20%   
+
+   customer_tenure_days  margin_percentage_tx  
+0                     0                 33.80  
+1                     0                 39.35  
+2                     0                 16.89  
+3                   652                 20.96  
+4                     0                -17.35  
+
+[5 rows x 40 columns]
+--- Code Output 29 ---
+transaction_id                0
+transaction_date              0
+customer_id                   0
+product_id                    0
+branch_id                     0
+channel                       0
+quantity                      0
+unit_price                    0
+discount_percentage           0
+gross_revenue                 0
+net_revenue                   0
+cost                          0
+gross_margin                  0
+payment_status                0
+campaign_id                   0
+has_campaign                  0
+product_name                  0
+category                      0
+standard_price                0
+cost_price                    0
+margin_percentage             0
+active_status                 0
+customer_type                 0
+segment                       0
+acquisition_channel           0
+customer_since                0
+location_category             0
+customer_attribute            0
+attribute_type                0
+campaign_name                 0
+campaign_start_date       40197
+campaign_end_date         40197
+offer_type                    0
+campaign_cost             40197
+transaction_year              0
+transaction_month             0
+transaction_year_month        0
+discount_band                 0
+customer_tenure_days          0
+margin_percentage_tx          0
+dtype: int64
+--- Code Output 30 ---
+(50000, 40)
+
+==================== IS_4007_Module_2.ipynb ====================
+--- Markdown 0 ---
+# Module 2 — Customer Analytics
+--- Code Output 3 ---
+(50000, 40)
+--- Code Output 4 ---
+customer_id         0
+transaction_date    0
+net_revenue         0
+segment             0
+customer_since      0
+dtype: int64
+--- Markdown 5 ---
+## RFM Analysis
+
+The dataset already has a business-assigned `segment` column
+(Premium / Standard / Budget / New). That is a *label*, not an *analysis*. RFM
+lets us measure actual customer behaviour independently and then check whether
+it agrees with the business label.
+
+**Definitions used:**
+- **Recency** — days between each customer's last purchase and a fixed snapshot
+  date (one day after the last transaction in the data).
+- **Frequency** — number of transactions per customer.
+- **Monetary** — total net revenue per customer.
+--- Code Output 6 ---
+Customers: 2,000
+
+       recency  frequency  monetary
+count 2,000.00   2,000.00  2,000.00
+mean     31.80      25.00  9,056.90
+std      51.20       5.90  3,339.10
+min       1.00       6.00    897.70
+25%       6.00      21.00  6,596.20
+50%      16.00      25.00  8,781.00
+75%      34.00      29.00 10,935.40
+max     388.00      44.00 23,400.90
+--- Code Output 7 ---
+<Figure size 1200x675 with 3 Axes>
+Saved ../exports/module2/rfm_distributions.png
+
+--- Markdown 8 ---
+### RFM Scoring & Customer Value Segments
+
+Each of the three RFM metrics is split into 5 equal-sized groups
+(quintiles) using `pd.qcut`, and scored 1 (worst) to 5 (best). Recency is scored
+in reverse, since a *smaller* number of days is better. The three scores are
+added into a single `rfm_total` (range 3–15), which is then mapped onto three
+business-friendly tiers.
+
+Quintiles are used instead of fixed cut-off values because Recency (days),
+Frequency (transaction count) and Monetary (currency) are on completely
+different scales — quintiles put all three on the same 1–5 footing before
+they are combined.
+--- Code Output 9 ---
+value_segment
+Medium Value    845
+Low Value       651
+High Value      504
+Name: count, dtype: int64
+--- Code Output 10 ---
+<Figure size 1200x675 with 1 Axes>
+Saved ../exports/module2/value_segment_counts.png
+
+--- Code Output 11 ---
+segment        Budget  New  Premium  Standard
+value_segment                                
+High Value        131   75       73       225
+Low Value         163   98      102       288
+Medium Value      207  119      128       391
+--- Markdown 12 ---
+* A sizeable number of customers labelled
+`Budget` or `Standard` in the business segment actually fall into `High Value`
+on RFM (and vice versa for some `Premium` customers). This is a genuine
+finding worth flagging in the report — the existing business label is not a
+reliable proxy for actual purchase value, which is exactly why a
+behaviour-based segmentation adds value on top of it.
+--- Markdown 13 ---
+## Cluster Analysis
+--- Markdown 14 ---
+### K-Means Clustering
+
+The quintile-based tiers above use
+fixed thresholds (12, 8) chosen by hand. Clustering instead lets the data
+decide where the natural groupings are, based on the raw Recency, Frequency
+and Monetary values (not the 1–5 scores).
+--- Code Output 15 ---
+<Figure size 1200x675 with 2 Axes>
+Saved ../exports/module2/kmeans_k_selection.png
+
+   k  inertia  silhouette
+0  2 3,719.38        0.36
+1  3 2,325.34        0.39
+2  4 1,797.32        0.33
+3  5 1,559.18        0.33
+4  6 1,350.76        0.30
+5  7 1,170.71        0.29
+6  8 1,078.74        0.28
+--- Markdown 16 ---
+* The silhouette score is actually highest at k=3, which
+statistically validates the 3-tier RFM segmentation above — the natural
+structure in the data really is close to three groups. We select **k=4**
+instead for the final model, because it still has an acceptable silhouette
+score (~0.33, well above the 0.25 threshold generally considered reasonable)
+and it separates out a distinct low-frequency, high-recency group that is
+commercially useful to flag separately (an "at-risk" segment) — a case where
+slightly more business granularity is worth a small drop in pure statistical
+optimality. This trade-off is stated explicitly rather than silently
+choosing whichever k looks best.
+--- Code Output 17 ---
+         recency  frequency  monetary  n_customers
+cluster                                           
+3          15.60      31.60 14,072.40          376
+0          18.40      27.10  9,258.10          896
+2          28.50      19.60  6,355.90          614
+1         209.10      15.90  5,480.60          114
+--- Code Output 18 ---
+cluster_label
+Repeat Customers    896
+Occasional          614
+Champions           376
+At Risk             114
+Name: count, dtype: int64
+--- Code Output 19 ---
+<Figure size 1200x675 with 1 Axes>
+Saved ../exports/module2/kmeans_clusters_scatter.png
+
+--- Markdown 20 ---
+## Customer Lifetime Value (CLV) Estimate
+
+```
+CLV = Average Order Value × Purchase Frequency per Year × Assumed Lifespan (years)
+```
+
+**Assumption:** lifespan is set to 3 years. The dataset
+only covers 2 years of actual transactions, so any lifespan figure is an
+assumption, not an observed value — 3 years is used as a simple, round
+planning horizon slightly beyond the observed data window.
+--- Code Output 21 ---
+count    2,000.00
+mean    11,679.00
+std      5,193.00
+min      1,372.00
+25%      7,847.00
+50%     10,994.00
+75%     14,768.00
+max     38,649.00
+Name: clv_estimate, dtype: float64
+--- Code Output 22 ---
+<Figure size 1200x675 with 1 Axes>
+Saved ../exports/module2/clv_distribution.png
+
+--- Markdown 23 ---
+## Repeat Purchase Behaviour & Inactive Customers
+--- Code Output 24 ---
+Minimum transactions per customer: 6
+Repeat purchase rate (>1 transaction): 100.0 %
+
+--- Markdown 25 ---
+**Repeat purchase rate:** note that in this dataset every customer already
+has at least 6 transactions (`rfm['frequency'].min()` below), so a simple
+"bought more than once" flag is not informative here.
+
+**Inactive customers:** defined as customers whose Recency exceeds 90 days.
+This threshold is chosen relative to the data itself — with a median
+purchase gap (16 days) this small, 90 days without a purchase is a meaningful drop-off,
+not an arbitrary number.
+--- Code Output 26 ---
+Inactive customers (> 90 days): 148 (7.4%)
+Historical revenue tied to inactive customers: 901,341
+
+--- Code Output 27 ---
+<Figure size 1200x675 with 1 Axes>
+Saved ../exports/module2/active_vs_inactive.png
+
+--- Markdown 28 ---
+## Top Customers & Revenue Concentration
+
+Rank customers by total net revenue (Monetary) and check what
+share of total revenue the top decile contributes. This is the customer-level
+equivalent of the Pareto analysis already done at the product level in
+Module 3 — it tells management how dependent the business is on a small
+group of customers.
+--- Code Output 29 ---
+     customer_id  recency  frequency  monetary value_segment cluster_label
+1283      C01284       11         32 23,400.90    High Value     Champions
+133       C00134        7         37 22,750.37    High Value     Champions
+1018      C01019        1         28 21,665.72    High Value     Champions
+230       C00231       16         42 21,269.99    High Value     Champions
+1131      C01132       17         34 20,894.44    High Value     Champions
+1968      C01969        1         36 20,733.87    High Value     Champions
+1732      C01733        9         31 20,157.01    High Value     Champions
+78        C00079        6         30 20,081.06    High Value     Champions
+1157      C01158        3         27 19,992.51    High Value     Champions
+928       C00929        4         43 19,982.56    High Value     Champions
+--- Code Output 30 ---
+Top 10% of customers (200 customers) contribute 17.3% of total revenue
+Top 20% of customers (400 customers) contribute 31.2% of total revenue
+
+--- Markdown 31 ---
+* Revenue is fairly evenly spread across the customer
+base (top 10% of customers contribute well under half of total revenue),
+unlike a classic 80/20 pattern. This is a useful, non-obvious finding — it means the business is not overly dependent on a small handful of
+customers, which is a different risk profile from the product-level
+concentration found in Module 3.
+--- Code Output 32 ---
+Saved ../exports/module2/module2_summary.json
+Saved ../exports/module2/customer_rfm_segments.csv
+
+
+==================== IS_4007_Module_3.ipynb ====================
+--- Markdown 0 ---
+#Module 3 — Product & Channel Performance
+--- Markdown 1 ---
+This notebook covers Task 4.1–4.5 of the project guide:
+
+1. Top/bottom 10 products by net revenue and margin
+2. Underperforming SKUs (low margin, low volume)
+3. Product Revenue Pareto Curve (80/20 rule)
+4. Category × Channel cross-tab and heatmap
+5. Branch revenue & margin performance tiers
+--- Code Output 4 ---
+(50000, 40)
+
+  product_id          product_name                category       channel  \
+0      P0099       Pro Cutlery Set           Home & Living        Online   
+1      P0006  Smart Herbal Tea Box         Food & Beverage        Branch   
+2      P0004    Ultra Lip Balm Set  Beauty & Personal Care        Dealer   
+3      P0096  Advanced Granola Mix         Food & Beverage        Branch   
+4      P0049           Lite Webcam             Electronics  Direct Sales   
+
+  branch_id  net_revenue  gross_margin  quantity  discount_percentage  
+0      BR06     1,435.32        485.10         6                 5.00  
+1      BR03        42.39         16.68         1                10.00  
+2      BR05        66.27         11.19         1                20.00  
+3      BR02        31.92          6.69         1                10.00  
+4      BR03       340.51        -59.09         3                20.00  
+--- Code Output 5 ---
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 50000 entries, 0 to 49999
+Data columns (total 40 columns):
+ #   Column                  Non-Null Count  Dtype         
+---  ------                  --------------  -----         
+ 0   transaction_id          50000 non-null  object        
+ 1   transaction_date        50000 non-null  datetime64[ns]
+ 2   customer_id             50000 non-null  object        
+ 3   product_id              50000 non-null  object        
+ 4   branch_id               50000 non-null  object        
+ 5   channel                 50000 non-null  object        
+ 6   quantity                50000 non-null  int64         
+ 7   unit_price              50000 non-null  float64       
+ 8   discount_percentage     50000 non-null  float64       
+ 9   gross_revenue           50000 non-null  float64       
+ 10  net_revenue             50000 non-null  float64       
+ 11  cost                    50000 non-null  float64       
+ 12  gross_margin            50000 non-null  float64       
+ 13  payment_status          50000 non-null  object        
+ 14  campaign_id             50000 non-null  object        
+ 15  has_campaign            50000 non-null  bool          
+ 16  product_name            50000 non-null  object        
+ 17  category                50000 non-null  object        
+ 18  standard_price          50000 non-null  float64       
+ 19  cost_price              50000 non-null  float64       
+ 20  margin_percentage       50000 non-null  float64       
+ 21  active_status           50000 non-null  object        
+ 22  customer_type           50000 non-null  object        
+ 23  segment                 50000 non-null  object        
+ 24  acquisition_channel     50000 non-null  object        
+ 25  customer_since          50000 non-null  object        
+ 26  location_category       50000 non-null  object        
+ 27  customer_attribute      50000 non-null  object        
+ 28  attribute_type          50000 non-null  object        
+ 29  campaign_name           50000 non-null  object        
+ 30  campaign_start_date     9803 non-null   object        
+ 31  campaign_end_date       9803 non-null   object        
+ 32  offer_type              50000 non-null  object        
+ 33  campaign_cost           9803 non-null   float64       
+ 34  transaction_year        50000 non-null  int64         
+ 35  transaction_month       50000 non-null  int64         
+ 36  transaction_year_month  50000 non-null  object        
+ 37  discount_band           50000 non-null  object        
+ 38  customer_tenure_days    50000 non-null  int64         
+ 39  margin_percentage_tx    50000 non-null  float64       
+dtypes: bool(1), datetime64[ns](1), float64(11), int64(4), object(23)
+memory usage: 14.9+ MB
+
+--- Code Output 6 ---
+transaction_id                0
+transaction_date              0
+customer_id                   0
+product_id                    0
+branch_id                     0
+channel                       0
+quantity                      0
+unit_price                    0
+discount_percentage           0
+gross_revenue                 0
+net_revenue                   0
+cost                          0
+gross_margin                  0
+payment_status                0
+campaign_id                   0
+has_campaign                  0
+product_name                  0
+category                      0
+standard_price                0
+cost_price                    0
+margin_percentage             0
+active_status                 0
+customer_type                 0
+segment                       0
+acquisition_channel           0
+customer_since                0
+location_category             0
+customer_attribute            0
+attribute_type                0
+campaign_name                 0
+campaign_start_date       40197
+campaign_end_date         40197
+offer_type                    0
+campaign_cost             40197
+transaction_year              0
+transaction_month             0
+transaction_year_month        0
+discount_band                 0
+customer_tenure_days          0
+margin_percentage_tx          0
+dtype: int64
+--- Markdown 7 ---
+has_campaign is False for exactly 40,197 rows and True for 9,803 — and those two counts match your missing-value counts exactly. So the pattern is: every transaction not tied to a campaign simply has no campaign dates or cost, because there's nothing to record. offer_type has 0 missing because it uses a placeholder string "No offer" instead of NaN for those same rows — that's why it looks "complete" while the others don't.
+
+This is what's called MNAR (missing not at random) — the absence itself is informative (it means "no campaign"), not a data quality gap. You should not impute/fill these with means or forward-fill — that would fabricate a campaign the transaction wasn't part of.
+--- Markdown 8 ---
+## Task 4.1 — Top/Bottom 10 Products by Net Revenue and Margin
+
+**Assertion:** A small set of SKUs is expected to dominate net revenue (Pareto behaviour),
+while a distinct set of low-margin products drags profitability even if they sell reasonably well.
+The code below produces two independent rankings — by revenue and by margin — so both angles
+are available for the report and app.
+
+--- Code Output 9 ---
+Saved ../exports/module3/product_rankings.json
+
+               product_name                category  net_revenue  margin_pct
+88          Pro Cutlery Set           Home & Living 1,548,615.61       26.87
+17    Everyday Denim Jacket                 Apparel 1,067,974.26       27.62
+16               Pro Webcam             Electronics   870,669.96       41.97
+31  Essential Tablet Sleeve             Electronics   789,128.44       40.52
+8          Compact Football       Sports & Outdoors   760,975.86       22.04
+78   Signature Lip Balm Set  Beauty & Personal Care   735,763.13       46.55
+81          Max Home Router             Electronics   632,808.05       45.57
+67     Advanced Cutlery Set           Home & Living   589,627.80       22.47
+29    Advanced Camping Tent       Sports & Outdoors   587,075.78       34.06
+52      Deluxe Water Bottle       Sports & Outdoors   583,606.56       29.68
+--- Code Output 10 ---
+Saved ../exports/module3/top10_products_revenue.png
+
+<Figure size 1200x675 with 1 Axes>
+--- Markdown 11 ---
+## Task 4.2 — Underperforming SKUs (Low Margin, Low Volume)
+
+**Method:** A product is flagged "underperforming" if it sits in the **bottom 25% of both**
+margin percentage and quantity sold — i.e. it doesn't sell well *and* isn't profitable when it does.
+This double-threshold avoids flagging low-volume-but-high-margin niche products, or high-volume
+loss leaders that may be strategic.
+--- Code Output 12 ---
+Saved ../exports/module3/underperforming_skus.json
+7 SKUs flagged as underperforming, representing $219,930 in net revenue.
+
+              product_name                category  net_revenue  margin_pct  \
+69       Classic Jump Rope       Sports & Outdoors    95,298.08       -2.97   
+65    Pro Protein Bar Pack         Food & Beverage     5,860.50        4.08   
+23           Ultra Shampoo  Beauty & Personal Care     6,299.57       18.86   
+50      Pro Scented Candle           Home & Living    30,171.46       19.66   
+55  Signature Baseball Cap                 Apparel    27,472.41       20.48   
+35      Plus Trekking Pole       Sports & Outdoors    14,330.69       20.52   
+44     Lite Cotton T-Shirt                 Apparel    40,497.13       21.05   
+
+    quantity_sold  
+69            355  
+65            184  
+23            441  
+50            266  
+55            327  
+35            337  
+44            482  
+--- Markdown 13 ---
+## Task 4.3 — Product Revenue Pareto Curve (80/20 Rule)
+
+**Assertion:** Revenue concentration is expected to broadly follow the Pareto principle — a
+minority of SKUs generating the large majority of revenue. We rank products by revenue,
+compute the cumulative % of total revenue, and identify the exact number/percentage of SKUs
+that account for 80% of revenue.
+--- Code Output 14 ---
+Saved ../exports/module3/product_pareto.json
+29 of 90 SKUs (32.2% of catalog) generate 80% of net revenue.
+
+--- Code Output 15 ---
+Saved ../exports/module3/product_pareto.png
+
+<Figure size 1200x675 with 2 Axes>
+--- Markdown 16 ---
+## Task 4.4 — Category × Channel Cross-Tabulation & Heatmap
+
+**Assertion:** Revenue performance is not uniform across category-channel combinations — some
+categories may over-index on a particular channel (e.g. Electronics online, Home & Living via
+Dealer), revealing channel specialization worth exploiting or rebalancing.
+--- Code Output 17 ---
+Saved ../exports/module3/channel_matrix.json
+
+channel                      Branch     Dealer  Direct Sales       Online  \
+category                                                                    
+Apparel                  412,792.28 242,583.92    250,023.51   567,144.95   
+Beauty & Personal Care   528,530.41 309,960.90    322,788.00   740,366.42   
+Electronics            1,366,975.52 864,212.98    840,212.12 1,992,868.94   
+Food & Beverage          234,120.67 143,484.47    142,214.54   326,701.13   
+Home & Living          1,032,673.30 598,032.22    612,246.73 1,429,947.90   
+Sports & Outdoors        917,036.22 533,909.27    553,358.77 1,335,158.72   
+
+channel                   Partner  
+category                           
+Apparel                156,305.51  
+Beauty & Personal Care 204,002.87  
+Electronics            579,143.33  
+Food & Beverage         91,402.76  
+Home & Living          402,818.90  
+Sports & Outdoors      382,784.38  
+--- Code Output 18 ---
+Saved ../exports/module3/channel_heatmap.png
+
+<Figure size 1200x675 with 2 Axes>
+--- Markdown 19 ---
+## Task 4.5 — Branch Revenue & Margin Performance Tiers
+
+**Method:** Branches are ranked by net revenue and split into three performance tiers
+(Top / Mid / Bottom third) using quantile cuts, so the report and app can flag underperforming
+locations at a glance.
+--- Code Output 20 ---
+Saved ../exports/module3/branch_matrix.json
+
+  branch_id  net_revenue  gross_margin  transactions  margin_pct         tier
+0      BR01 3,250,357.65  1,022,501.42          8950       31.46     Top Tier
+1      BR02 2,664,098.66    819,956.69          7522       30.78     Top Tier
+2      BR03 2,540,622.25    792,623.07          7053       31.20     Top Tier
+3      BR04 2,417,565.75    760,406.05          6374       31.45     Mid Tier
+4      BR05 2,165,589.80    676,589.78          6047       31.24     Mid Tier
+5      BR06 1,847,936.41    572,912.71          5139       31.00  Bottom Tier
+6      BR07 1,826,339.55    577,645.11          4929       31.63  Bottom Tier
+7      BR08 1,401,291.57    439,794.52          3986       31.38  Bottom Tier
+--- Code Output 21 ---
+Saved ../exports/module3/branch_performance.png
+
+<Figure size 1200x675 with 1 Axes>
+
+==================== IS_4007_Module_4(new).ipynb ====================
+--- Markdown 0 ---
+# Module 4 — Pricing & Discount Strategy
+# Owner: Member B
+
+# Covers:
+  1. Discount distribution
+  2. Revenue by discount band
+ 3. Margin impact of discounting
+    4. Discount vs quantity sold (correlation + elasticity regression)
+ 5. Over-discounted products & customers
+# Methods: correlation, OLS regression, hypothesis tests, margin comparison,
+#          campaign vs organic (promotion) analysis
+
+--- Code Output 6 ---
+Shape: (50000, 41)
+Columns sample: ['transaction_id', 'transaction_date', 'customer_id', 'product_id', 'branch_id', 'channel', 'quantity', 'unit_price', 'discount_percentage', 'gross_revenue', 'net_revenue', 'cost', 'gross_margin', 'payment_status', 'campaign_id']
+
+--- Code Output 7 ---
+Saved ../exports/module4/discount_kpis.json
+
+=== 5.1 Baseline KPIs ===
+  avg_discount_pct: 10.45
+  median_discount_pct: 10.0
+  pct_transactions_discounted: 77.18
+  avg_effective_price: 113.21
+  effective_price_std: 138.79
+  effective_price_variance: 19261.73
+  avg_standard_price: 126.65
+  avg_margin_pct: 28.7
+  generated_at: 2026-07-31T11:19:03.128290+00:00
+
+--- Code Output 8 ---
+Saved ../exports/module4/discount_dist.json
+Saved ../exports/module4/discount_distribution.png
+
+<Figure size 1200x675 with 2 Axes>
+--- Code Output 9 ---
+Saved ../exports/module4/revenue_by_discount_band.json
+
+=== Revenue by Discount Band ===
+               transactions  total_net_revenue  avg_net_revenue  \
+discount_band                                                     
+0%                    11408         4520159.36           396.23   
+1-5%                   9778         3779474.54           386.53   
+11-15%                 8153         2814601.34           345.22   
+16-20%                 6140         2023482.24           329.56   
+20%+                   5423         1614675.05           297.75   
+6-10%                  9098         3361409.11           369.47   
+
+               total_quantity  avg_quantity  avg_discount_pct  avg_margin_pct  \
+discount_band                                                                   
+0%                      36359          3.19              0.00           36.83   
+1-5%                    31506          3.22              5.00           33.61   
+11-15%                  25838          3.17             14.29           26.35   
+16-20%                  19517          3.18             19.05           22.09   
+20%+                    17373          3.20             28.08           11.79   
+6-10%                   28959          3.18              9.65           29.89   
+
+               revenue_share_pct  
+discount_band                     
+0%                         24.95  
+1-5%                       20.87  
+11-15%                     15.54  
+16-20%                     11.17  
+20%+                        8.91  
+6-10%                      18.56  
+Saved ../exports/module4/revenue_by_discount_band.png
+
+<Figure size 1200x675 with 2 Axes>
+--- Code Output 10 ---
+Saved ../exports/module4/margin_impact.json
+
+=== Margin Impact ===
+Corr(discount, margin): -0.5529
+=======================================================================================
+                          coef    std err          t      P>|t|      [0.025      0.975]
+---------------------------------------------------------------------------------------
+const                  38.0068      0.083    459.101      0.000      37.845      38.169
+discount_percentage    -0.8906      0.006   -148.369      0.000      -0.902      -0.879
+=======================================================================================
+               avg_margin_pct  median_margin_pct  avg_discount_pct  \
+discount_band                                                        
+0%                      36.83              36.92              0.00   
+1-5%                    33.61              33.66              5.00   
+11-15%                  26.35              26.35             14.29   
+16-20%                  22.09              22.05             19.05   
+20%+                    11.79              13.46             28.08   
+6-10%                   29.89              29.95              9.65   
+
+               transactions  
+discount_band                
+0%                    11408  
+1-5%                   9778  
+11-15%                 8153  
+16-20%                 6140  
+20%+                   5423  
+6-10%                  9098  
+Saved ../exports/module4/margin_by_discount_band.png
+
+<Figure size 1200x675 with 1 Axes>
+--- Code Output 11 ---
+Saved ../exports/module4/elasticity_model.json
+
+=== Discount vs Quantity / Elasticity ===
+Corr(discount, quantity): -0.0020
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                log_qty   R-squared:                       0.000
+Model:                            OLS   Adj. R-squared:                 -0.000
+Method:                 Least Squares   F-statistic:                    0.7486
+Date:                Fri, 31 Jul 2026   Prob (F-statistic):              0.387
+Time:                        11:19:06   Log-Likelihood:                -37037.
+No. Observations:               50000   AIC:                         7.408e+04
+Df Residuals:                   49998   BIC:                         7.410e+04
+Df Model:                           1                                         
+Covariance Type:            nonrobust                                         
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const          1.0350      0.009    111.800      0.000       1.017       1.053
+log_price      0.0019      0.002      0.865      0.387      -0.002       0.006
+==============================================================================
+Omnibus:                     2078.341   Durbin-Watson:                   1.998
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):             2290.310
+Skew:                          -0.513   Prob(JB):                         0.00
+Kurtosis:                       2.780   Cond. No.                         18.5
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+
+--- Code Output 12 ---
+
+Quantity by discount band:
+               mean  median    sum  count
+discount_band                            
+0%             3.19     3.0  36359  11408
+1-5%           3.22     3.0  31506   9778
+11-15%         3.17     3.0  25838   8153
+16-20%         3.18     3.0  19517   6140
+20%+           3.20     3.0  17373   5423
+6-10%          3.18     3.0  28959   9098
+Saved ../exports/module4/discount_vs_quantity.png
+
+<Figure size 1200x675 with 2 Axes>
+--- Code Output 14 ---
+Saved ../exports/module4/hypothesis_tests.json
+
+=== Hypothesis Tests ===
+{
+  "median_discount_split": 10.0,
+  "ttest_quantity_high_vs_low_discount": {
+    "t_stat": -1.1523,
+    "p_value": 0.2492,
+    "mean_qty_low_discount": 3.197,
+    "mean_qty_high_discount": 3.182,
+    "conclusion": "No significant volume lift from deeper discounts"
+  },
+  "ttest_margin_high_vs_low_discount": {
+    "t_stat": -99.6508,
+    "p_value": 0.0,
+    "mean_margin_low_discount": 33.703,
+    "mean_margin_high_discount": 21.019,
+    "conclusion": "Deeper discounts significantly reduce margin"
+  },
+  "anova_quantity_across_bands": {
+    "f_stat": 1.4574,
+    "p_value": 0.2002
+  },
+  "generated_at": "2026-07-31T11:19:07.859663+00:00"
+}
+
+--- Code Output 15 ---
+Saved ../exports/module4/erosion_summary.json
+
+--- Code Output 16 ---
+
+Erosion from discounts > 20.0%: $633,668 (3.5% of net revenue)
+Saved ../exports/module4/erosion_by_category.png
+
+<Figure size 1200x675 with 1 Axes>
+--- Code Output 18 ---
+Saved ../exports/module4/over_discounted_products.json
+
+=== Over-discounted products (n=0) ===
+Empty DataFrame
+Columns: [transactions, avg_discount_pct, avg_margin_pct, total_net_revenue, avg_quantity, pct_txns_over_20]
+Index: []
+
+--- Code Output 19 ---
+Saved ../exports/module4/over_discounted_customers.json
+
+=== Over-discounted customers (n=24) ===
+             orders  avg_discount_pct  avg_margin_pct  total_net_revenue  \
+customer_id                                                                
+C01838           16             19.29           16.50            8589.79   
+C01682           12             18.19           20.52            4182.33   
+C00642           29             18.06           19.57            7981.50   
+C00784           17             17.09           24.52            5428.81   
+C01600            8             16.99           18.31            2379.68   
+C00163           25             16.59           20.98            8727.81   
+C01485           17             16.43           23.31            3899.32   
+C00740           13             16.18           28.20            5447.21   
+C00960           17             16.11           24.47            7077.72   
+C01078           31             15.99           22.69            9548.91   
+C00719           21             15.94           22.57            6186.49   
+C01685           14             15.61           24.83            3259.87   
+C00864           33             15.52           18.63            9082.16   
+C00049           21             15.41           23.58           12683.79   
+C01067           25             15.41           21.29            8985.00   
+
+             avg_quantity  pct_txns_over_20  
+customer_id                                  
+C01838               3.19             37.50  
+C01682               3.08             25.00  
+C00642               3.14             34.48  
+C00784               3.12             23.53  
+C01600               3.00             25.00  
+C00163               3.24             28.00  
+C01485               2.71             29.41  
+C00740               3.38             23.08  
+C00960               3.59             29.41  
+C01078               3.61             25.81  
+C00719               2.95             28.57  
+C01685               2.86              7.14  
+C00864               2.91             24.24  
+C00049               3.57             23.81  
+C01067               2.88             20.00  
+
+--- Code Output 20 ---
+Saved ../exports/module4/campaign_vs_organic.json
+
+=== Campaign vs Organic ===
+                       transactions  avg_discount_pct  avg_quantity  \
+has_campaign                                                          
+Organic (no campaign)         40197              8.32          3.19   
+Campaign-driven                9803             19.18          3.20   
+
+                       total_net_revenue  avg_net_revenue_per_txn  \
+has_campaign                                                        
+Organic (no campaign)        14871810.60                   369.97   
+Campaign-driven               3241991.04                   330.71   
+
+                       avg_margin_pct  
+has_campaign                           
+Organic (no campaign)           30.55  
+Campaign-driven                 21.13  
+Total campaign spend: $366,709 | Naive ROI: 784.08%
+Excessive erosion split: {'Organic (no campaign)': np.float64(160900.0), 'Campaign-driven': np.float64(472768.0)}
+Saved ../exports/module4/campaign_vs_organic.png
+
+<Figure size 1200x675 with 2 Axes>
+--- Code Output 21 ---
+
+============================================================
+MODULE 4 KEY NUMBERS FOR SECTION 8
+============================================================
+Average discount: 10.45% (77.18% of txns discounted)
+Price elasticity β: 0.0019 (p=0.3869) — Inelastic / not significant
+Corr(discount, quantity): -0.0020
+Corr(discount, margin): -0.5529
+Revenue erosion (>20% discounts): $633,668 (3.5% of net revenue)
+Category with highest erosion: Electronics ($206,223)
+Over-discounted products flagged: 0
+Over-discounted customers flagged: 24
+
+Revenue by discount band (total net revenue):
+               total_net_revenue  revenue_share_pct  avg_margin_pct
+discount_band                                                      
+0%                    4520159.36              24.95           36.83
+1-5%                  3779474.54              20.87           33.61
+11-15%                2814601.34              15.54           26.35
+16-20%                2023482.24              11.17           22.09
+20%+                  1614675.05               8.91           11.79
+6-10%                 3361409.11              18.56           29.89
+
+
+==================== IS_4007_Module_4.ipynb ====================
+--- Markdown 0 ---
+# Module 4 — Pricing & Discount Strategy
+
+This notebook covers Task 5.1–5.5:
+1. Average discount rate & price variance
+2. Discount distribution by channel & customer type
+3. Price Elasticity of Demand (Log-Log OLS regression)
+4. Discount depth vs order volume / repeat purchase rate
+5. Revenue erosion from excessive discounting
+--- Code Output 1 ---
+(3660, 40)
+
+--- Markdown 2 ---
+## Task 5.1 — Average Discount Rate & Price Variance
+
+**Assertion:** Before assessing whether discounting is helping or hurting revenue, we need a
+baseline: how deep are discounts on average, and how much does effective selling price vary
+around the standard price?
+--- Code Output 3 ---
+Saved ../exports/module4/discount_kpis.json
+
+{'avg_discount_pct': np.float64(8.29),
+ 'median_discount_pct': 5.0,
+ 'pct_transactions_discounted': np.float64(70.96),
+ 'avg_effective_price': np.float64(118.62),
+ 'effective_price_std': 144.38,
+ 'effective_price_variance': 20844.43,
+ 'avg_standard_price': np.float64(129.26),
+ 'generated_at': '2026-07-25T11:00:12.823150+00:00'}
+--- Markdown 4 ---
+## Task 5.2 — Discount Distribution by Channel & Customer Type
+
+**Method:** We look at both the *spread* of discount percentages (histogram) and the *average
+discount by channel/customer type* (grouped bars), to see whether particular channels or
+customer segments are being discounted more aggressively than others.
+--- Code Output 5 ---
+Saved ../exports/module4/discount_dist.json
+
+              mean  median  count
+channel                          
+Branch        8.22     5.0    891
+Dealer        8.46     5.0    554
+Direct Sales  8.38     5.0    569
+Online        8.24     5.0   1274
+Partner       8.20     5.0    372
+--- Markdown 7 ---
+## Task 5.3 — Price Elasticity of Demand (Log-Log OLS)
+
+**Model:** `log(quantity) = α + β · log(effective_price)`. The coefficient β is the price
+elasticity of demand: negative and |β| > 1 means demand is elastic (price cuts meaningfully
+grow volume); |β| < 1 means demand is inelastic (discounting mostly just erodes margin without
+generating enough extra volume to compensate).
+--- Code Output 8 ---
+Saved ../exports/module4/elasticity_model.json
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                log_qty   R-squared:                       0.000
+Model:                            OLS   Adj. R-squared:                 -0.000
+Method:                 Least Squares   F-statistic:                   0.08957
+Date:                Sat, 25 Jul 2026   Prob (F-statistic):              0.765
+Time:                        11:01:34   Log-Likelihood:                -2683.4
+No. Observations:                3660   AIC:                             5371.
+Df Residuals:                    3658   BIC:                             5383.
+Df Model:                           1                                         
+Covariance Type:            nonrobust                                         
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const          1.0603      0.034     31.232      0.000       0.994       1.127
+log_price     -0.0023      0.008     -0.299      0.765      -0.018       0.013
+==============================================================================
+Omnibus:                      179.520   Durbin-Watson:                   2.017
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):              204.709
+Skew:                          -0.574   Prob(JB):                     3.53e-45
+Kurtosis:                       2.845   Cond. No.                         18.6
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+
+--- Code Output 9 ---
+Saved ../exports/module4/elasticity_curve.png
+
+<Figure size 1200x675 with 1 Axes>
+--- Markdown 10 ---
+## Task 5.4 — Discount Depth vs Order Volume & Repeat Purchase Rate
+
+**Assertion:** If discounting is working commercially, deeper discounts should correlate with
+larger order quantities and/or higher repeat purchase rates. We test both correlations directly.
+--- Code Output 11 ---
+Saved ../exports/module4/discount_corr.json
+
+{'corr_discount_vs_quantity': np.float64(0.0081),
+ 'corr_discount_vs_repeat_purchase': np.float64(-0.0334),
+ 'overall_repeat_purchase_rate_pct': np.float64(64.72),
+ 'repeat_rate_by_discount_band': {'0%': 79.24,
+  '1-5%': 81.57,
+  '11-15%': 80.31,
+  '16-20%': 82.34,
+  '20%+': 78.23,
+  '6-10%': 80.38},
+ 'interpretation': 'Weak/near-zero correlation indicates deeper discounts are NOT meaningfully driving larger orders or repeat purchases',
+ 'generated_at': '2026-07-25T11:02:36.076984+00:00'}
+--- Code Output 12 ---
+Saved ../exports/module4/discount_vs_repeat.png
+
+<Figure size 1200x675 with 1 Axes>
+--- Markdown 13 ---
+## Task 5.5 — Revenue Erosion from Excessive Discounting
+
+**Method:** "Excessive" discounts are defined as transactions discounted above a threshold
+(here: the 90th percentile of discount %, flagged separately from a fixed 20% policy line so
+both a data-driven and a policy-driven view are available). Erosion = the gap between what
+revenue *would have been* at standard price and what was actually collected, for those
+transactions.
+
+--- Code Output 14 ---
+Saved ../exports/module4/erosion_summary.json
+Revenue erosion from discounts > 20.0%: $14,983 (1.08% of total net revenue)
+
+--- Code Output 15 ---
+Saved ../exports/module4/erosion_by_category.png
+
+<Figure size 1200x675 with 1 Axes>
+--- Markdown 16 ---
+## Task 5.6 (Extension) — Campaign-Driven vs Organic Discounting
+
+**Why this matters:** `campaign_start_date`, `campaign_end_date`, and `campaign_cost` are only
+populated when `has_campaign == True` (9,803 of 50,000 transactions) — the rest are legitimately
+`NaN`, not missing data to be imputed, because there's no campaign to record. This is a natural
+split point: does discounting *inside* a marketing campaign behave differently — deeper, more
+effective, less erosive — than the ad-hoc/organic discounting the business does the rest of the
+time?
+
+**Assertion:** If campaigns are well-targeted, campaign-driven discounts should be more
+efficient — similar or deeper discount depth, but better volume/revenue outcomes and no worse
+erosion — than organic discounting. If the two look the same, campaigns aren't adding
+commercial discipline beyond what happens anyway.
+--- Code Output 17 ---
+Saved ../exports/module4/campaign_vs_organic.json
+
+/tmp/ipykernel_1401/277580715.py:17: RuntimeWarning: invalid value encountered in scalar divide
+  campaign_roi_pct = round((campaign_revenue - total_campaign_cost) / total_campaign_cost * 100, 2)
+
+                       transactions  avg_discount_pct  avg_quantity  \
+has_campaign                                                          
+Organic (no campaign)          3660              8.29          3.21   
+
+                       total_net_revenue  avg_net_revenue_per_txn  \
+has_campaign                                                        
+Organic (no campaign)         1385906.04                   378.66   
+
+                       avg_margin_pct  
+has_campaign                           
+Organic (no campaign)           30.41  
+--- Code Output 18 ---
+Saved ../exports/module4/campaign_vs_organic.png
+
+<Figure size 1200x675 with 2 Axes>
+
+==================== IS_4007_Module_5.ipynb ====================
+--- Markdown 0 ---
+# Module 5 — Revenue Forecasting
+--- Markdown 1 ---
+This notebook covers Task 6.1–6.5 of the project guide:
+
+1. Monthly revenue trend and seasonality check
+2. Train/test split and a naive baseline forecast
+3. Trend + seasonal-index forecasting model
+4. Forecast accuracy (MAE, RMSE, MAPE) on a held-out period
+5. Final 6-month forecast with best/base/worst-case scenario bands
+--- Code Output 4 ---
+Months of data available: 24
+
+transaction_date
+2024-01-01     744,569.80
+2024-02-01     622,378.61
+2024-03-01     715,153.15
+2024-04-01     688,371.21
+2024-05-01     682,884.45
+2024-06-01     624,422.76
+2024-07-01     678,545.82
+2024-08-01     667,922.62
+2024-09-01     701,128.11
+2024-10-01     753,539.31
+2024-11-01     948,773.55
+2024-12-01   1,085,475.43
+2025-01-01     728,338.36
+2025-02-01     650,191.41
+2025-03-01     707,460.86
+2025-04-01     773,624.29
+2025-05-01     673,614.69
+2025-06-01     619,052.73
+2025-07-01     664,748.28
+2025-08-01     728,875.22
+2025-09-01     725,877.89
+2025-10-01     814,560.86
+2025-11-01     995,672.82
+2025-12-01   1,118,619.41
+Freq: MS, Name: net_revenue, dtype: float64
+--- Markdown 5 ---
+## Monthly Revenue Trend & Seasonality Check
+
+Before picking any forecasting model, we need to actually look
+at the series to see whether it has a trend, seasonality, or both.
+--- Code Output 6 ---
+<Figure size 1200x675 with 1 Axes>
+Saved ../exports/module5/monthly_revenue_trend.png
+
+--- Markdown 7 ---
+Revenue rises noticeably every November and
+December in both years, then drops back in January — a clear, repeating
+annual (12-month) seasonal pattern, on top of a mild overall upward trend.
+This has two direct consequences for model choice:
+
+- With only **24 months** of history, that is exactly **2 full seasonal
+  cycles**. Several seasonal models (e.g. Holt-Winters' seasonal variant,
+  SARIMA) need at least 2 full cycles just to *initialise* their seasonal
+  component, and are still statistically fragile with only 2 — there is no
+  spare data left to validate the seasonal estimate against. This is stated
+  here explicitly as a limitation rather than glossed over.
+- A simpler, more transparent approach — classical trend + seasonal-index
+  decomposition — captures the same two features (trend, seasonality)
+  without needing more data than is available, and is easier to explain to a
+  business audience than a fitted ARIMA model.
+--- Code Output 8 ---
+<Figure size 1200x675 with 1 Axes>
+Saved ../exports/module5/seasonality_by_month.png
+
+--- Markdown 9 ---
+## Train/Test Split & Naive Baseline
+
+The last 3 months are held out as a test set and never touched
+during model fitting. This gives an honest, out-of-sample check of forecast
+accuracy.
+
+**Naive baseline:** the simplest reasonable forecast — the average of the
+last 3 training months, carried forward flat. Any real model needs to beat
+this to be worth using.
+--- Code Output 10 ---
+Train: 21 months (2024-01 to 2025-09)
+Test:  3 months (2025-10 to 2025-12)
+
+transaction_date
+2025-10-01   706,500.46
+2025-11-01   706,500.46
+2025-12-01   706,500.46
+Freq: MS, dtype: float64
+--- Markdown 11 ---
+## Trend + Seasonal-Index Forecasting Model
+--- Code Output 12 ---
+<Figure size 1200x675 with 1 Axes>
+Saved ../exports/module5/seasonal_index.png
+
+transaction_date
+1    0.97
+2    0.87
+3    0.94
+4    1.03
+5    0.89
+6    0.81
+7    0.89
+8    0.90
+9    0.95
+10   1.02
+11   1.27
+12   1.45
+Name: net_revenue, dtype: float64
+--- Code Output 13 ---
+Fitted trend: revenue changes by about 1,645 per month (deseasonalised)
+
+--- Code Output 14 ---
+<Figure size 1200x675 with 1 Axes>
+Saved ../exports/module5/trend_fit_deseasonalised.png
+
+--- Code Output 15 ---
+transaction_date
+2025-10-01     781,361.46
+2025-11-01     976,574.10
+2025-12-01   1,120,823.06
+Freq: MS, dtype: float64
+--- Markdown 16 ---
+## Forecast Accuracy on the Holdout Period
+--- Code Output 17 ---
+                    model        MAE       RMSE  MAPE (%)
+0    Naive (flat average) 269,784.00 297,288.00     26.38
+1  Trend + Seasonal Index  18,167.00  22,150.00      2.06
+--- Code Output 18 ---
+<Figure size 1200x675 with 1 Axes>
+Saved ../exports/module5/holdout_validation.png
+
+--- Markdown 19 ---
+* The trend + seasonal-index model has a much lower
+MAPE than the naive baseline on data the model never saw during fitting —
+confirming that explicitly modelling the November/December seasonal spike is
+worth the extra step, rather than just assuming next month looks like the
+recent average.
+--- Markdown 20 ---
+## Final 6-Month Forecast with Scenario Bands
+
+Refit the trend line on **all 24 months** (the holdout split was
+only needed to validate the method — the final forecast should use every
+available data point) and project 6 months ahead.
+
+Rather than picking an arbitrary ± percentage, the
+best/base/worst-case band width is set using the model's own in-sample
+residual standard deviation (i.e. how far actual revenue typically deviated
+from the fitted trend + seasonal line historically). This ties the scenario
+range to the model's own demonstrated accuracy instead of a guessed number.
+--- Code Output 21 ---
+In-sample residual std: 21,537 (2.9% of average monthly revenue)
+
+     month  worst_case  base_case  best_case
+0  2026-01  739,228.00 760,765.00 782,302.00
+1  2026-02  660,423.00 681,960.00 703,497.00
+2  2026-03  717,404.00 738,941.00 760,478.00
+3  2026-04  786,398.00 807,935.00 829,472.00
+4  2026-05  679,057.00 700,594.00 722,131.00
+5  2026-06  620,671.00 642,208.00 663,745.00
+--- Code Output 22 ---
+<Figure size 1200x675 with 1 Axes>
+Saved ../exports/module5/final_forecast_scenarios.png
+
+--- Code Output 23 ---
+Saved ../exports/module5/module5_summary.json
+Saved ../exports/module5/revenue_forecast_next_6_months.csv
+
+
+==================== IS_4007_Module_6.ipynb ====================
+--- Markdown 1 ---
+### Load Data
+--- Code Output 3 ---
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 100 entries, 0 to 99
+Data columns (total 7 columns):
+ #   Column             Non-Null Count  Dtype  
+---  ------             --------------  -----  
+ 0   product_id         100 non-null    object 
+ 1   product_name       100 non-null    object 
+ 2   category           100 non-null    object 
+ 3   standard_price     100 non-null    float64
+ 4   cost_price         100 non-null    float64
+ 5   margin_percentage  100 non-null    float64
+ 6   active_status      100 non-null    object 
+dtypes: float64(3), object(4)
+memory usage: 5.6+ KB
+
+--- Code Output 4 ---
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 2000 entries, 0 to 1999
+Data columns (total 8 columns):
+ #   Column               Non-Null Count  Dtype 
+---  ------               --------------  ----- 
+ 0   customer_id          2000 non-null   object
+ 1   customer_type        2000 non-null   object
+ 2   segment              2000 non-null   object
+ 3   acquisition_channel  2000 non-null   object
+ 4   customer_since       2000 non-null   object
+ 5   location_category    2000 non-null   object
+ 6   age_band             1388 non-null   object
+ 7   business_size        612 non-null    object
+dtypes: object(8)
+memory usage: 125.1+ KB
+
+--- Code Output 5 ---
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 20 entries, 0 to 19
+Data columns (total 6 columns):
+ #   Column         Non-Null Count  Dtype  
+---  ------         --------------  -----  
+ 0   campaign_id    20 non-null     object 
+ 1   campaign_name  20 non-null     object 
+ 2   start_date     20 non-null     object 
+ 3   end_date       20 non-null     object 
+ 4   offer_type     20 non-null     object 
+ 5   campaign_cost  20 non-null     float64
+dtypes: float64(1), object(5)
+memory usage: 1.1+ KB
+
+--- Code Output 6 ---
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 50000 entries, 0 to 49999
+Data columns (total 15 columns):
+ #   Column               Non-Null Count  Dtype  
+---  ------               --------------  -----  
+ 0   transaction_id       50000 non-null  object 
+ 1   transaction_date     50000 non-null  object 
+ 2   customer_id          50000 non-null  object 
+ 3   product_id           50000 non-null  object 
+ 4   branch_id            50000 non-null  object 
+ 5   channel              50000 non-null  object 
+ 6   quantity             50000 non-null  int64  
+ 7   unit_price           50000 non-null  float64
+ 8   discount_percentage  50000 non-null  float64
+ 9   gross_revenue        50000 non-null  float64
+ 10  net_revenue          50000 non-null  float64
+ 11  cost                 50000 non-null  float64
+ 12  gross_margin         50000 non-null  float64
+ 13  payment_status       50000 non-null  object 
+ 14  campaign_id          9803 non-null   object 
+dtypes: float64(6), int64(1), object(8)
+memory usage: 5.7+ MB
+
+--- Markdown 8 ---
+### Merge age_band / business_size into one field
+--- Markdown 10 ---
+### Handling Missing Values
+--- Code Output 11 ---
+customer_id            0
+customer_type          0
+segment                0
+acquisition_channel    0
+customer_since         0
+location_category      0
+customer_attribute     0
+attribute_type         0
+dtype: int64
+--- Code Output 12 ---
+product_id           0
+product_name         0
+category             0
+standard_price       0
+cost_price           0
+margin_percentage    0
+active_status        0
+dtype: int64
+--- Code Output 13 ---
+campaign_id      0
+campaign_name    0
+start_date       0
+end_date         0
+offer_type       0
+campaign_cost    0
+dtype: int64
+--- Code Output 14 ---
+transaction_id             0
+transaction_date           0
+customer_id                0
+product_id                 0
+branch_id                  0
+channel                    0
+quantity                   0
+unit_price                 0
+discount_percentage        0
+gross_revenue              0
+net_revenue                0
+cost                       0
+gross_margin               0
+payment_status             0
+campaign_id            40197
+dtype: int64
+--- Code Output 16 ---
+  transaction_id transaction_date customer_id product_id branch_id  \
+0      TXN034365       2024-01-01      C00155      P0099      BR06   
+1      TXN010962       2024-01-01      C00043      P0006      BR03   
+2      TXN007598       2024-01-01      C01252      P0004      BR05   
+3      TXN038126       2024-01-01      C01733      P0096      BR02   
+4      TXN018144       2024-01-01      C01923      P0049      BR03   
+
+        channel  quantity  unit_price  discount_percentage  gross_revenue  \
+0        Online         6      251.81                  5.0        1510.86   
+1        Branch         1       47.10                 10.0          47.10   
+2        Dealer         1       82.84                 20.0          82.84   
+3        Branch         1       35.47                 10.0          35.47   
+4  Direct Sales         3      141.88                 20.0         425.64   
+
+   net_revenue    cost  gross_margin payment_status  campaign_id  has_campaign  
+0      1435.32  950.22        485.10           Paid  No Campaign         False  
+1        42.39   25.71         16.68           Paid  No Campaign         False  
+2        66.27   55.08         11.19           Paid  No Campaign         False  
+3        31.92   25.23          6.69           Paid  No Campaign         False  
+4       340.51  399.60        -59.09           Paid  No Campaign         False  
+--- Markdown 17 ---
+### JOIN: sales + products + customers + campaigns
+--- Markdown 19 ---
+### Derives Columns
+--- Markdown 21 ---
+### Validation Check
+--- Code Output 22 ---
+============================================================
+VALIDATION REPORT
+============================================================
+Total rows in master_sales: 50,000
+Date range: 2024-01-01 to 2025-12-31
+
+-- Referential integrity --
+Unmatched product_id: 0
+Unmatched customer_id: 0
+
+-- Negative value checks --
+Negative net_revenue: 0
+Negative gross_margin: 2230 (expected: some, due to heavy discounting)
+Negative customer_tenure_days: 0 (should be 0 - a sale can't happen before the customer joined)
+
+-- Missing values per column --
+campaign_start_date    40197
+campaign_end_date      40197
+campaign_cost          40197
+dtype: int64
+
+-- Category summary --
+payment_status:
+ payment_status
+Paid              41930
+Overdue            3630
+Pending            2967
+Partially Paid     1473
+Name: count, dtype: int64
+
+has_campaign:
+ has_campaign
+False    40197
+True      9803
+Name: count, dtype: int64
+
+--- Markdown 23 ---
+### Save
+--- Code Output 24 ---
+
+Saved master_sales.csv -> 50,000 rows, 40 columns
+Columns: ['transaction_id', 'transaction_date', 'customer_id', 'product_id', 'branch_id', 'channel', 'quantity', 'unit_price', 'discount_percentage', 'gross_revenue', 'net_revenue', 'cost', 'gross_margin', 'payment_status', 'campaign_id', 'has_campaign', 'product_name', 'category', 'standard_price', 'cost_price', 'margin_percentage', 'active_status', 'customer_type', 'segment', 'acquisition_channel', 'customer_since', 'location_category', 'customer_attribute', 'attribute_type', 'campaign_name', 'campaign_start_date', 'campaign_end_date', 'offer_type', 'campaign_cost', 'transaction_year', 'transaction_month', 'transaction_year_month', 'discount_band', 'customer_tenure_days', 'margin_percentage_tx']
+Saved customers_cleaned.csv -> 2,000 rows (customer_since corrected)
+
+-- Post-fix check --
+Negative customer_tenure_days now: 0
+
+Absolute path used: C:\Users\SHINI\revenue_analytics_project\data\processed\master_sales.csv
+File exists? True
+
+Contents of OUT_DIR/processed:
+['.~lock.master_sales.csv#', 'master_sales.csv']
+
+--- Code Output 25 ---
+Absolute path used: C:\Users\SHINI\revenue_analytics_project\data\processed\master_sales.csv
+File exists? True
+
+Contents of OUT_DIR/processed:
+['.~lock.master_sales.csv#', 'master_sales.csv']
+
+--- Code Output 26 ---
+C:\Users\SHINI\AppData\Local\Temp\ipykernel_13516\3669382234.py:1: DtypeWarning: Columns (30,31) have mixed types. Specify dtype option on import or set low_memory=False.
+  master = pd.read_csv("C:/Users/SHINI/revenue_analytics_project/data/processed/master_sales.csv")
+
+--- Code Output 27 ---
+['transaction_id', 'transaction_date', 'customer_id', 'product_id', 'branch_id', 'channel', 'quantity', 'unit_price', 'discount_percentage', 'gross_revenue', 'net_revenue', 'cost', 'gross_margin', 'payment_status', 'campaign_id', 'has_campaign', 'product_name', 'category', 'standard_price', 'cost_price', 'margin_percentage', 'active_status', 'customer_type', 'segment', 'acquisition_channel', 'customer_since', 'location_category', 'customer_attribute', 'attribute_type', 'campaign_name', 'campaign_start_date', 'campaign_end_date', 'offer_type', 'campaign_cost', 'transaction_year', 'transaction_month', 'transaction_year_month', 'discount_band', 'customer_tenure_days', 'margin_percentage_tx']
+
+--- Code Output 28 ---
+  transaction_id transaction_date customer_id product_id branch_id  \
+0      TXN034365       2024-01-01      C00155      P0099      BR06   
+1      TXN010962       2024-01-01      C00043      P0006      BR03   
+2      TXN007598       2024-01-01      C01252      P0004      BR05   
+3      TXN038126       2024-01-01      C01733      P0096      BR02   
+4      TXN018144       2024-01-01      C01923      P0049      BR03   
+
+        channel  quantity  unit_price  discount_percentage  gross_revenue  \
+0        Online         6      251.81                  5.0        1510.86   
+1        Branch         1       47.10                 10.0          47.10   
+2        Dealer         1       82.84                 20.0          82.84   
+3        Branch         1       35.47                 10.0          35.47   
+4  Direct Sales         3      141.88                 20.0         425.64   
+
+   ...  campaign_start_date  campaign_end_date  offer_type campaign_cost  \
+0  ...                  NaN                NaN    No offer           NaN   
+1  ...                  NaN                NaN    No offer           NaN   
+2  ...                  NaN                NaN    No offer           NaN   
+3  ...                  NaN                NaN    No offer           NaN   
+4  ...                  NaN                NaN    No offer           NaN   
+
+  transaction_year  transaction_month transaction_year_month discount_band  \
+0             2024                  1                2024-01          1-5%   
+1             2024                  1                2024-01         6-10%   
+2             2024                  1                2024-01        16-20%   
+3             2024                  1                2024-01         6-10%   
+4             2024                  1                2024-01        16-20%   
+
+   customer_tenure_days  margin_percentage_tx  
+0                     0                 33.80  
+1                     0                 39.35  
+2                     0                 16.89  
+3                   652                 20.96  
+4                     0                -17.35  
+
+[5 rows x 40 columns]
+--- Code Output 29 ---
+transaction_id                0
+transaction_date              0
+customer_id                   0
+product_id                    0
+branch_id                     0
+channel                       0
+quantity                      0
+unit_price                    0
+discount_percentage           0
+gross_revenue                 0
+net_revenue                   0
+cost                          0
+gross_margin                  0
+payment_status                0
+campaign_id                   0
+has_campaign                  0
+product_name                  0
+category                      0
+standard_price                0
+cost_price                    0
+margin_percentage             0
+active_status                 0
+customer_type                 0
+segment                       0
+acquisition_channel           0
+customer_since                0
+location_category             0
+customer_attribute            0
+attribute_type                0
+campaign_name                 0
+campaign_start_date       40197
+campaign_end_date         40197
+offer_type                    0
+campaign_cost             40197
+transaction_year              0
+transaction_month             0
+transaction_year_month        0
+discount_band                 0
+customer_tenure_days          0
+margin_percentage_tx          0
+dtype: int64
+--- Code Output 30 ---
+(50000, 40)
+--- Markdown 31 ---
+### Module 6: Revenue Leakage and Underperformance Analysis
+--- Code Output 32 ---
+======================================================================
+1. OVERDUE / AT-RISK REVENUE (Aging Analysis)
+======================================================================
+Total net revenue: 18,113,801.64
+At-risk revenue (Overdue+Pending+Partially Paid): 2,980,373.07 (16.45% of total)
+
+Breakdown by status:
+                        sum  count  % of total revenue
+payment_status                                        
+Overdue          1348108.73   3630                7.44
+Paid            15133428.57  41930               83.55
+Partially Paid    537440.50   1473                2.97
+Pending          1094823.84   2967                6.04
+
+Aging buckets (at-risk transactions only):
+                     sum  count
+aging_bucket                   
+0-30 days      181156.17    480
+31-60 days     162121.43    418
+61-90 days     126870.44    364
+90+ days      2510225.03   6808
+
+--- Code Output 33 ---
+
+======================================================================
+2. EXCESSIVE DISCOUNTING (Threshold-Based Flags)
+======================================================================
+Transactions with discount > 20%: 5,423 (10.8% of all transactions)
+Revenue tied up in high-discount transactions: 1,614,675.05
+
+Avg margin % - high discount group: 11.79%
+Avg margin % - low/no discount group: 30.76%
+Avg quantity - high discount group: 3.20
+Avg quantity - low/no discount group: 3.19
+
+Products most exposed to excessive discounting (by revenue lost to high discounts):
+product_name
+Pro Cutlery Set            138540.59
+Everyday Denim Jacket       91915.46
+Essential Tablet Sleeve     84001.90
+Lite Webcam                 75592.03
+Pro Webcam                  75314.74
+Signature Lip Balm Set      63303.68
+Advanced Cutlery Set        59528.29
+Max Home Router             56093.06
+Compact Football            54698.76
+Deluxe Water Bottle         50170.61
+Name: net_revenue, dtype: float64
+
+--- Code Output 34 ---
+
+======================================================================
+3. LOW-MARGIN SALES
+======================================================================
+Transactions with margin % < 10%: 4,796 (9.6% of all transactions)
+Revenue tied up in low-margin sales: 1,308,073.00 (7.22% of total revenue)
+
+Low-margin revenue by category:
+category
+Sports & Outdoors         634121.87
+Home & Living             219085.69
+Electronics               204304.68
+Apparel                    98142.86
+Beauty & Personal Care     78663.81
+Food & Beverage            73754.09
+Name: net_revenue, dtype: float64
+
+Low-margin revenue by channel:
+channel
+Online          448637.31
+Branch          349938.27
+Dealer          207403.44
+Direct Sales    173059.57
+Partner         129034.41
+Name: net_revenue, dtype: float64
+
+--- Code Output 35 ---
+
+======================================================================
+4. INACTIVE CUSTOMERS
+======================================================================
+Inactivity threshold: no purchase in 90+ days
+Inactive customers: 148 out of 2,000 (7.40%)
+Historical revenue generated by now-inactive customers: 901,341.10
+
+--- Code Output 36 ---
+
+======================================================================
+5. WEAK BRANCHES / CHANNELS
+======================================================================
+Branch performance:
+           total_revenue  avg_margin_pct  n_transactions  revenue_vs_avg
+branch_id                                                               
+BR08          1401291.57           28.93            3986      -862933.64
+BR07          1826339.55           28.95            4929      -437885.66
+BR06          1847936.41           28.33            5139      -416288.80
+BR05          2165589.80           28.69            6047       -98635.41
+BR04          2417565.75           28.58            6374       153340.54
+BR03          2540622.25           28.63            7053       276397.04
+BR02          2664098.66           28.57            7522       399873.46
+BR01          3250357.65           28.93            8950       986132.44
+
+Branches below average on BOTH revenue and margin (flagged as weak): ['BR05', 'BR06']
+
+Channel performance:
+              total_revenue  avg_margin_pct  n_transactions
+channel                                                    
+Partner          1816457.75           28.98            4975
+Dealer           2692183.76           28.43            7462
+Direct Sales     2720843.67           28.82            7540
+Branch           4492128.40           28.62           12489
+Online           6392188.06           28.74           17534
+
+Channels below average on BOTH revenue and margin (flagged as weak): ['Dealer']
+
+--- Code Output 37 ---
+
+======================================================================
+6. PRODUCT UNDERPERFORMANCE
+======================================================================
+Total products: 85
+Underperforming products (bottom ~20% of cumulative revenue - Pareto tail): 58
+Combined revenue of underperformers: 3,729,961.59 (20.59% of total)
+
+Sample of underperforming products:
+                            total_revenue  total_margin  avg_margin_pct  \
+product_name                                                              
+Classic Jump Rope               213593.85      39319.15           17.89   
+Everyday Yoga Mat               199142.64      59893.53           29.27   
+Advanced Water Bottle           179953.35      72682.95           39.72   
+Essential USB-C Hub             166049.23      26814.53           15.21   
+Deluxe Laptop Stand             161805.10      74545.63           45.44   
+Prime Sparkling Water Pack      135267.01      31230.91           22.26   
+Compact Rain Jacket             129905.21      34948.04           26.25   
+Ultra Camping Tent              124862.33       2811.00            1.38   
+Ultra Cushion Cover             121237.12      29319.30           23.23   
+Lite Trekking Pole              115217.74      38000.46           32.24   
+
+                            n_transactions  cumulative_revenue_pct  
+product_name                                                        
+Classic Jump Rope                      239                   80.59  
+Everyday Yoga Mat                      329                   81.69  
+Advanced Water Bottle                  275                   82.68  
+Essential USB-C Hub                    187                   83.60  
+Deluxe Laptop Stand                    378                   84.49  
+Prime Sparkling Water Pack             992                   85.24  
+Compact Rain Jacket                    385                   85.95  
+Ultra Camping Tent                     225                   86.64  
+Ultra Cushion Cover                    143                   87.31  
+Lite Trekking Pole                     598                   87.95  
+
+All flagged datasets saved as CSV files for use in the app / report appendix.
+
+--- Code Output 38 ---
+REVENUE LEAKAGE & UNDERPERFORMANCE - SUMMARY RESULTS
+============================================================
+
+1. Overdue/At-Risk Revenue
+   Total net revenue: Rs. 18,113,801.64
+   At-risk revenue: Rs. 2,980,373.07 (16.45% of total)
+   Of which, 90+ days old: Rs. 2,510,225.03 (84.2% of at-risk)
+
+2. Excessive Discounting (>20%)
+   Transactions: 5,423 (10.8% of all)
+   Avg margin - high discount: 11.79%  vs  low discount: 30.76%
+   Avg quantity - high discount: 3.20  vs  low discount: 3.19
+
+3. Low-Margin Sales (<10%)
+   Transactions: 4,796 (9.6% of all)
+   Revenue tied up: Rs. 1,308,073.00 (7.22% of total)
+   Top category: Sports & Outdoors
+   Top channel: Online
+
+4. Inactive Customers (90+ days)
+   Inactive: 148 of 2,000 (7.40%)
+   Historical revenue from inactive customers: Rs. 901,341.10
+
+5. Weak Branches/Channels
+   Weak branches (below avg revenue AND margin): ['BR05', 'BR06']
+   Weak channels (below avg revenue AND margin): ['Dealer']
+
+6. Product Underperformance
+   Total products: 85
+   Underperforming (bottom 20% cumulative revenue): 58 (68%)
+   Combined revenue of underperformers: Rs. 3,729,961.59 (20.59% of total)
+
+============================================================
+END OF SUMMARY
+
