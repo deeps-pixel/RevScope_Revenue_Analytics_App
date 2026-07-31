@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RevScope Analytics</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo" id="sidebar-toggle">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span class="logo-text">RevScope</span>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-link active" data-target="mod1">
+                    <i class="fa-solid fa-table-columns"></i> <span class="nav-text">Executive Dashboard</span>
+                </a>
+                <a href="#" class="nav-link" data-target="mod2">
+                    <i class="fa-solid fa-users"></i> <span class="nav-text">Customer Analytics</span>
+                </a>
+                <a href="#" class="nav-link" data-target="mod3">
+                    <i class="fa-solid fa-box-open"></i> <span class="nav-text">Product & Channel</span>
+                </a>
+                <a href="#" class="nav-link" data-target="mod4">
+                    <i class="fa-solid fa-tags"></i> <span class="nav-text">Pricing & Discounts</span>
+                </a>
+                <a href="#" class="nav-link" data-target="mod5">
+                    <i class="fa-solid fa-chart-line"></i> <span class="nav-text">Revenue Forecasting</span>
+                </a>
+                <a href="#" class="nav-link" data-target="mod6">
+                    <i class="fa-solid fa-droplet"></i> <span class="nav-text">Revenue Leakage</span>
+                </a>
+                <a href="#" class="nav-link" data-target="mod7">
+                    <i class="fa-solid fa-lightbulb"></i> <span class="nav-text">Recommendations</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="avatar">U</div>
+                    <div class="user-details">
+                        <span class="user-name">Admin User</span>
+                        <span class="user-role">Revenue Manager</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" id="main-content">
+            <header class="topbar">
+                <div class="page-title">
+                    <div>
+                        <h1 id="current-page-title">Executive Revenue Dashboard</h1>
+                        <p id="current-page-subtitle">Summary of overall revenue performance</p>
+                    </div>
+                </div>
+                <div class="topbar-actions">
+                    <button id="exportBtn" class="btn btn-primary"><i class="fa-solid fa-download"></i> Export</button>
+                </div>
+            </header>
+
+            <div class="content-area">
+                
+                <!-- Module 1: Executive Revenue Dashboard -->
+                <section id="mod1" class="module-content active">
+                    <!-- Metrics Row -->
+                    <div class="grid grid-4 mb-4">
+                        <div class="card metric-card">
+                            <h3 class="card-title"><i class="fa-solid fa-sack-dollar" style="margin-right: 8px; color: var(--clr-accent);"></i>Total Revenue</h3>
+                            <div class="metric-value">$18.11M</div>
+                            <div class="metric-subtitle">Net revenue for selected period</div>
+                        </div>
+                        <div class="card metric-card">
+                            <h3 class="card-title"><i class="fa-solid fa-percent" style="margin-right: 8px; color: var(--clr-accent);"></i>Gross Margin</h3>
+                            <div class="metric-value">30.4%</div>
+                            <div class="metric-subtitle">Avg gross margin</div>
+                        </div>
+                        <div class="card metric-card">
+                            <h3 class="card-title"><i class="fa-solid fa-cart-shopping" style="margin-right: 8px; color: var(--clr-accent);"></i>Avg Order Value</h3>
+                            <div class="metric-value">$378.66</div>
+                            <div class="metric-subtitle">Net revenue / transactions</div>
+                        </div>
+                        <div class="card metric-card">
+                            <h3 class="card-title"><i class="fa-solid fa-building" style="margin-right: 8px; color: var(--clr-accent);"></i>Active Branches</h3>
+                            <div class="metric-value">8</div>
+                            <div class="metric-subtitle">Currently generating revenue</div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row 1 -->
+                    <div class="grid grid-2 mb-4">
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Revenue Trend</h3>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="revenueTrendChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Revenue by Category</h3>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="revenueCategoryChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row 2 -->
+                    <div class="grid grid-2">
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Revenue by Channel</h3>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="revenueChannelChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Revenue by Branch</h3>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="revenueBranchChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Module 2: Customer Analytics -->
+                <section id="mod2" class="module-content">
+                    <div class="grid grid-3 mb-4">
+                        <div class="card metric-card">
+                            <h3 class="card-title">Total Customers</h3>
+                            <div class="metric-value">2,000</div>
+                            <div class="metric-subtitle">Active in period</div>
+                        </div>
+                        <div class="card metric-card">
+                            <h3 class="card-title">Avg Customer Lifetime Value</h3>
+                            <div class="metric-value">$11,679</div>
+                            <div class="metric-subtitle">Estimated overall value</div>
+                        </div>
+                        <div class="card metric-card">
+                            <h3 class="card-title">Repeat Purchase Rate</h3>
+                            <div class="metric-value">100%</div>
+                            <div class="metric-subtitle">Min. 6 transactions per customer</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-2 mb-4">
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Customer Value Segmentation</h3>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="customerSegChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <h3 class="card-title">RFM Clusters</h3>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="rfmChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-2">
+                        <div class="card table-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Top Customers</h3>
+                            </div>
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Customer ID</th>
+                                            <th>Revenue</th>
+                                            <th>Segment</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="top-customers-body">
+                                        <!-- populated by js -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card table-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Inactive Customers</h3>
+                            </div>
+                            <div class="table-container">
+                                <div class="insight-content">
+                                    <div class="insight-stat">148 <span>(7.4%)</span></div>
+                                    <div class="insight-label">Customers inactive for >90 days</div>
+                                    <div class="insight-stat mt-3">$901,341</div>
+                                    <div class="insight-label">Historical revenue tied to inactive customers</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Module 3: Product and Channel Revenue Analysis -->
+                <section id="mod3" class="module-content">
+                    <div class="grid grid-2 mb-4">
+                        <div class="card table-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Top Products</h3>
+                            </div>
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Product Name</th>
+                                            <th>Net Revenue</th>
+                                            <th>Margin %</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="top-products-body">
+                                        <!-- populated by js -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card table-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Low-Performing Products</h3>
+                            </div>
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Product Name</th>
+                                            <th>Net Revenue</th>
+                                            <th>Margin %</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="low-products-body">
+                                        <!-- populated by js -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-2-1 mb-4">
+                        <div class="card chart-card" style="display: flex; flex-direction: column;">
+                            <div class="card-header">
+                                <h3 class="card-title"><i class="fa-solid fa-chart-bar" style="margin-right: 8px; color: var(--clr-accent);"></i>Channel Comparison</h3>
+                            </div>
+                            <div class="chart-container" style="flex: 1; position: relative;">
+                                <canvas id="channelComparisonChart"></canvas>
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: var(--space-lg);">
+                            <div class="card chart-card" style="flex: 1;">
+                                <div class="card-header">
+                                    <h3 class="card-title"><i class="fa-solid fa-boxes-stacked" style="margin-right: 8px; color: var(--clr-accent);"></i>Product Pareto</h3>
+                                </div>
+                                <div class="chart-container insight-content" style="padding-top: var(--space-md);">
+                                    <div class="insight-stat">29 <span>SKUs</span></div>
+                                    <div class="insight-label mb-3">Out of 90 (32.2% of catalog)</div>
+                                    <div class="insight-stat">80%</div>
+                                    <div class="insight-label">Of total net revenue generated</div>
+                                </div>
+                            </div>
+                            <div class="card chart-card" style="flex: 1;">
+                                <div class="card-header">
+                                    <h3 class="card-title"><i class="fa-solid fa-triangle-exclamation" style="margin-right: 8px; color: var(--clr-accent);"></i>Weak Performers</h3>
+                                </div>
+                                <div class="chart-container insight-content" style="padding-top: var(--space-md);">
+                                    <div class="insight-text-stat text-warning">BR05, BR06</div>
+                                    <div class="insight-label mb-3"><strong>Branches</strong></div>
+                                    
+                                    <div class="insight-text-stat text-warning">Dealer</div>
+                                    <div class="insight-label mb-2"><strong>Channels</strong></div>
+                                    
+                                    <div class="insight-help">* Below average on both revenue & margin</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Module 4: Pricing and Discount Analysis -->
+                <section id="mod4" class="module-content">
+                    <div class="grid grid-2 mb-4">
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Discount Distribution</h3>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="discountDistChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Margin Impact (Campaign vs Organic)</h3>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="marginImpactChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-3">
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Average Discount KPIs</h3>
+                            </div>
+                            <div class="chart-container insight-content">
+                                <div class="insight-stat">10.45%</div>
+                                <div class="insight-label">Average Discount Percentage</div>
+                                <div class="insight-stat mt-3">77.18%</div>
+                                <div class="insight-label">Transactions Discounted</div>
+                            </div>
+                        </div>
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Discount vs Volume</h3>
+                            </div>
+                            <div class="chart-container insight-content">
+                                <div class="insight-stat text-danger">0.0019</div>
+                                <div class="insight-label">Price Elasticity (Inelastic)</div>
+                                <div class="insight-help mt-3">Correlation is very weak (-0.0020). Deeper discounts do NOT meaningfully drive larger orders or repeat purchases.</div>
+                            </div>
+                        </div>
+                        <div class="card table-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Over-discounted</h3>
+                            </div>
+                            <div class="table-container insight-content">
+                                <div class="insight-label">Revenue lost from discounts > 20%</div>
+                                <div class="insight-stat text-danger">$633,668</div>
+                                <div class="insight-label">3.5% of total net revenue</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Module 5: Revenue Forecasting -->
+                <section id="mod5" class="module-content">
+                    <div class="grid grid-3 mb-4">
+                        <div class="card metric-card">
+                            <h3 class="card-title">Next Month Forecast</h3>
+                            <div class="metric-value">$760,765</div>
+                            <div class="metric-subtitle">Expected revenue (Base case)</div>
+                        </div>
+                        <div class="card metric-card">
+                            <h3 class="card-title">6-Month Forecast</h3>
+                            <div class="metric-value">$4.33M</div>
+                            <div class="metric-subtitle">Expected cumulative revenue</div>
+                        </div>
+                        <div class="card metric-card">
+                            <h3 class="card-title">Forecast Error (MAPE)</h3>
+                            <div class="metric-value">2.06%</div>
+                            <div class="metric-subtitle">Trend + Seasonal Index Model</div>
+                        </div>
+                    </div>
+
+                    <div class="card chart-card mb-4">
+                        <div class="card-header">
+                            <h3 class="card-title">Revenue Forecast Chart (Next 6 Months)</h3>
+                            <div class="card-action">
+                                <select class="dropdown-filter">
+                                    <option>Trend + Seasonal Index</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="chart-container large">
+                            <canvas id="forecastChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Module 6: Revenue Leakage and Underperformance -->
+                <section id="mod6" class="module-content">
+                    <div class="grid grid-3 mb-4">
+                        <div class="card alert-card danger">
+                            <div class="alert-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                            <div class="alert-content">
+                                <h3 class="card-title">Overdue Revenue</h3>
+                                <div class="metric-value">$2.98M</div>
+                                <div class="metric-subtitle">16.45% of total revenue</div>
+                            </div>
+                        </div>
+                        <div class="card alert-card warning">
+                            <div class="alert-icon"><i class="fa-solid fa-tags"></i></div>
+                            <div class="alert-content">
+                                <h3 class="card-title">Excessive Discounting</h3>
+                                <div class="metric-value">$1.61M</div>
+                                <div class="metric-subtitle">>20% discounts without revenue benefit</div>
+                            </div>
+                        </div>
+                        <div class="card alert-card warning">
+                            <div class="alert-icon"><i class="fa-solid fa-arrow-trend-down"></i></div>
+                            <div class="alert-content">
+                                <h3 class="card-title">Low-Margin Sales</h3>
+                                <div class="metric-value">$1.30M</div>
+                                <div class="metric-subtitle"><10% margin (7.22% of total)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-3">
+                        <div class="card list-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Inactive Customers</h3>
+                            </div>
+                            <div class="list-container">
+                                <ul class="custom-list">
+                                    <li><strong>Count:</strong> 148 (7.4%)</li>
+                                    <li><strong>Lost Revenue:</strong> $901,341</li>
+                                    <li><strong>Threshold:</strong> 90+ days without purchase</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card list-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Weak Channels/Branches</h3>
+                            </div>
+                            <div class="list-container">
+                                <ul class="custom-list">
+                                    <li><strong>Branches:</strong> BR05, BR06</li>
+                                    <li><strong>Channels:</strong> Dealer</li>
+                                    <li class="help-text">* Below average on both revenue & margin</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card list-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Product Underperformance</h3>
+                            </div>
+                            <div class="list-container">
+                                <ul class="custom-list">
+                                    <li><strong>Underperforming SKUs:</strong> 58 (68%)</li>
+                                    <li><strong>Combined Revenue:</strong> $3.73M (20.59%)</li>
+                                    <li><strong>Examples:</strong> Classic Jump Rope, Everyday Yoga Mat, Advanced Water Bottle</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Module 7: Recommendations Page -->
+                <section id="mod7" class="module-content">
+                    <div class="grid grid-2 mb-4">
+                        <div class="card" style="display: flex; align-items: flex-start; gap: var(--space-lg); padding: var(--space-lg);">
+                            <div class="rec-icon bg-primary"><i class="fa-solid fa-users-viewfinder"></i></div>
+                            <div class="rec-content">
+                                <h3>Reactivate High-Value Customers</h3>
+                                <p><strong>Finding:</strong> 148 customers (7.4%) are inactive (>90 days), representing $901,341 in lost revenue.</p>
+                                <p><strong>Action:</strong> Run a targeted reactivation email/SMS campaign offering personalized incentives to this specific segment.</p>
+                            </div>
+                        </div>
+
+                        <div class="card" style="display: flex; align-items: flex-start; gap: var(--space-lg); padding: var(--space-lg);">
+                            <div class="rec-icon bg-accent"><i class="fa-solid fa-tags"></i></div>
+                            <div class="rec-content">
+                                <h3>Reduce Blanket Discounting</h3>
+                                <p><strong>Finding:</strong> >20% discounts cause $1.61M erosion without volume gain, dropping margin to 21.13%.</p>
+                                <p><strong>Action:</strong> Cap blanket discounting at 15% and shift towards targeted, volume-based discounts.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-2 mb-4">
+                        <div class="card" style="display: flex; align-items: flex-start; gap: var(--space-lg); padding: var(--space-lg);">
+                            <div class="rec-icon bg-danger"><i class="fa-solid fa-box-open"></i></div>
+                            <div class="rec-content">
+                                <h3>Optimize Underperforming SKUs</h3>
+                                <p><strong>Finding:</strong> 58 SKUs (68% of catalog) yield only 20.59% of revenue with low margins (e.g. Classic Jump Rope).</p>
+                                <p><strong>Action:</strong> Review pricing/supplier costs. Discontinue the worst performers to free working capital.</p>
+                            </div>
+                        </div>
+
+                        <div class="card" style="display: flex; align-items: flex-start; gap: var(--space-lg); padding: var(--space-lg);">
+                            <div class="rec-icon bg-warning"><i class="fa-solid fa-shop"></i></div>
+                            <div class="rec-content">
+                                <h3>Reassess Channel Operations</h3>
+                                <p><strong>Finding:</strong> Dealer channel and BR05/BR06 are consistently below average on revenue and margin.</p>
+                                <p><strong>Action:</strong> Reassess dealer commissions and audit operating costs at underperforming branches.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-2 mb-4">
+                        <div class="card" style="display: flex; align-items: flex-start; gap: var(--space-lg); padding: var(--space-lg);">
+                            <div class="rec-icon bg-primary"><i class="fa-solid fa-arrow-trend-down"></i></div>
+                            <div class="rec-content">
+                                <h3>Mitigate Seasonal Revenue Dip</h3>
+                                <p><strong>Finding:</strong> Revenue forecast predicts a seasonal dip heading into June 2026 (drop to $642k).</p>
+                                <p><strong>Action:</strong> Plan and execute preemptive marketing campaigns and promotions in late April/May.</p>
+                            </div>
+                        </div>
+
+                        <div class="card" style="display: flex; align-items: flex-start; gap: var(--space-lg); padding: var(--space-lg);">
+                            <div class="rec-icon bg-success"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                            <div class="rec-content">
+                                <h3>Accelerate Overdue Collections</h3>
+                                <p><strong>Finding:</strong> Overdue payments total $2.98M, representing a massive 16.45% of total revenue.</p>
+                                <p><strong>Action:</strong> Prioritize aggressive collections and implement stricter credit terms for pending invoices.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
